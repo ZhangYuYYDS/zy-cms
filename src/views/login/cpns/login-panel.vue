@@ -38,17 +38,25 @@
 </template>
 
 <script setup lang="ts">
+import { localCache } from '@/utils/cache';
 import panelAccount from './panel-account.vue';
 import panelPhone from './panel-phone.vue';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
+// 默认是账号登录
 const activeName = ref('account');
-const isRem = ref(false);
-const accountRef = ref<InstanceType<typeof panelAccount>>();
 
+// 记住密码单选框的状态保持不变
+const isRem = ref<boolean>(localCache.getCache('isRem') ?? false);
+watch(isRem, (newValue) => {
+  localCache.setCache('isRem', newValue);
+});
+
+// 获取子组件实例
+const accountRef = ref<InstanceType<typeof panelAccount>>();
 function handleLoginBtnClick() {
   if (activeName.value == 'account') {
-    // 获取子组件实例并执行实例中的方法+记住密码的功能（将isRem作为参数传递过去）
+    // 执行子组件实例中的方法+记住密码的功能（将isRem作为参数传递过去）
     accountRef.value?.loginAction(isRem.value);
   } else {
     console.log('phone');

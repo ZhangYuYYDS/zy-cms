@@ -22,8 +22,8 @@ import { localCache } from '@/utils/cache';
 
 // 定义内部数据
 const account = reactive<Account>({
-  name: '',
-  password: '',
+  name: localCache.getCache('name') ?? '',
+  password: localCache.getCache('password') ?? '',
 });
 
 // 定义form的验证规则
@@ -48,12 +48,7 @@ function loginAction(isRem: boolean) {
       // 获取用户的账号密码
       const name = account.name;
       const password = account.password;
-      // 发送网络请求（携带账号和密码）
-      // 版本1：直接发送网络请求
-      // accountLoginRequest({ name, password }).then((res) => {
-      //   console.log(res);
-      // });
-      // 版本2：在store的actions中发送网络请求
+      // 在store的actions中发送网络请求
       loginStore.loginAccountAction({ name, password });
 
       // 记住密码
