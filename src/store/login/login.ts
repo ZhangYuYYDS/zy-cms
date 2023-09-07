@@ -1,28 +1,42 @@
 import { defineStore } from 'pinia';
-import { accountLoginRequest } from '@/service/login/login';
+import { accountLoginRequest, getUserById, getRoleMenus } from '@/service/login/login';
 import type { Account } from '@/types/login';
 import { localCache } from '@/utils/cache';
 import router from '@/router/index';
 
-const LOGIN_TOKEN = 'login/token';
+// interface ILoginState {
+//   id: number;
+//   token: string;
+//   userInfo: any;
+//   userMenus: any[];
+//   permissions: string[];
+// }
 
 export const useLoginStore = defineStore('Login', {
   state: () => ({
-    id: '',
-    name: '',
-    token: localCache.getCache(LOGIN_TOKEN) ?? '',
+    token: localCache.getCache('token') ?? '',
+    userInfo: {},
+    userMenus: {},
   }),
-  getters: {},
   actions: {
     async loginAccountAction(account: Account) {
       // 1. 登录成功
       const loginResult = await accountLoginRequest(account);
-      this.id = loginResult.data.id;
-      this.name = loginResult.data.name;
+      const id = loginResult.data.id;
       this.token = loginResult.data.token;
 
       // 2. 将token进行本地缓存
-      localCache.setCache(LOGIN_TOKEN, this.token);
+      localCache.setCache('token', this.token);
+
+      // 页面跳转前的操作：RBAC
+      // ①获取某个用户信息
+      const userResult = await getUserById(id);
+      this.userInfo = userResult.data;
+      const roleId = userResult.data.role.id;
+
+      // ②根据role的id获取菜单
+      const menuResult = await getRoleMenus(roleId);
+      this.userMenus = menuResult.data;
 
       // 3. 页面跳转（main页面）
       router.push('/main');
