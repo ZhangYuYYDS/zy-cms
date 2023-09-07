@@ -15,8 +15,8 @@ interface ILoginState {
 export const useLoginStore = defineStore('Login', {
   state: (): ILoginState => ({
     token: localCache.getCache('token') ?? '',
-    userInfo: {},
-    userMenus: [],
+    userInfo: localCache.getCache('userInfo') ?? {},
+    userMenus: localCache.getCache('userMenus') ?? [],
   }),
   actions: {
     async loginAccountAction(account: Account) {
@@ -31,12 +31,16 @@ export const useLoginStore = defineStore('Login', {
       // 页面跳转前的操作：RBAC
       // ①获取某个用户信息
       const userResult = await getUserById(id);
-      this.userInfo = userResult.data;
+      const userInfo = userResult.data;
+      this.userInfo = userInfo;
+      localCache.setCache('userInfo', userInfo);
       const roleId = userResult.data.role.id;
 
       // ②根据role的id获取菜单
       const menuResult = await getRoleMenus(roleId);
-      this.userMenus = menuResult.data;
+      const userMenus = menuResult.data;
+      this.userMenus = userMenus;
+      localCache.setCache('userMenus', userMenus);
 
       // 3. 页面跳转（main页面）
       router.push('/main');

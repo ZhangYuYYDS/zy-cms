@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center justify-center w-full h-full login" >
+  <div class="flex items-center justify-center w-full h-full login">
     <login-panel></login-panel>
   </div>
 </template>
