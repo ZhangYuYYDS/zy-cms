@@ -12,13 +12,13 @@ export function accountLoginRequest(account: Account) {
 // 查询某个用户
 export function getUserById(id: number) {
   return zyRequest.get({
-    url: '/user/' + id,
+    url: `/users/${id}`,
   });
 }
 
 // 查询某个菜单
 export function getRoleMenus(id: number) {
   return zyRequest.get({
-    url: '/menu/' + id,
+    url: `/role/${id}/menu/`,
   });
 }
