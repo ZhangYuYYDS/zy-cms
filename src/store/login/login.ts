@@ -17,9 +17,9 @@ interface ILoginState {
 export const useLoginStore = defineStore('Login', {
   state: (): ILoginState => ({
     name: '', // 存name主要为了登录时展示信息哪里可以换名字
-    token: localCache.getCache('token') ?? '',
-    userInfo: localCache.getCache('userInfo') ?? {},
-    userMenus: localCache.getCache('userMenus') ?? [],
+    token: '',
+    userInfo: {},
+    userMenus: [],
   }),
   actions: {
     async loginAccountAction(account: Account) {
@@ -31,6 +31,7 @@ export const useLoginStore = defineStore('Login', {
 
       // 2. 将token进行本地缓存
       localCache.setCache('token', this.token);
+      localCache.setCache('name', this.name);
 
       // 页面跳转前的操作一：RBAC
       // ①获取某个用户信息
@@ -52,6 +53,22 @@ export const useLoginStore = defineStore('Login', {
 
       // 3. 页面跳转（main页面）
       router.push('/main');
+    },
+
+    // 用户进行刷新时默认加载数据
+    loadLocalDataAction() {
+      this.token = localCache.getCache('token');
+      this.name = localCache.getCache('name');
+      this.userInfo = localCache.getCache('userInfo');
+      this.userMenus = localCache.getCache('userMenus');
+      // this.permissions = localCache.getCache('permissions');
+
+      // 这三个都有值说明用户处于已经登录的状态
+      if (this.token && this.userMenus && this.userInfo && this.name) {
+        // 再次动态添加路由
+        const routes = mapMenuToRoutes(this.userMenus);
+        routes.forEach((route) => router.addRoute('main', route));
+      }
     },
   },
 });
