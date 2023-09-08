@@ -20,7 +20,7 @@
         <span class="flex items-center cursor-pointer gap-x-2">
           <el-avatar :size="30" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" class="" />
           <!-- 名字 -->
-          <span>ZY</span>
+          <span>{{ useLoginStore().name }}</span>
         </span>
 
         <template #dropdown>
@@ -47,6 +47,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { localCache } from '../../../utils/cache';
+import { useLoginStore } from '@/store/login/login';
 
 const router = useRouter();
 function handleExitClick() {

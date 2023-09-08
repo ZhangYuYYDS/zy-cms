@@ -3,10 +3,11 @@ import { accountLoginRequest, getUserById, getRoleMenus } from '@/service/login/
 import type { Account } from '@/types/login';
 import { localCache } from '@/utils/cache';
 import router from '@/router/index';
-import { RouteRecordRaw } from 'vue-router';
+import { mapMenuToRoutes } from '@/utils/map-menus';
 
 // 指定state的类型
 interface ILoginState {
+  name: string;
   token: string;
   userInfo: any;
   userMenus: any[];
@@ -15,6 +16,7 @@ interface ILoginState {
 
 export const useLoginStore = defineStore('Login', {
   state: (): ILoginState => ({
+    name: '', // 存name主要为了登录时展示信息哪里可以换名字
     token: localCache.getCache('token') ?? '',
     userInfo: localCache.getCache('userInfo') ?? {},
     userMenus: localCache.getCache('userMenus') ?? [],
@@ -24,6 +26,7 @@ export const useLoginStore = defineStore('Login', {
       // 1. 登录成功
       const loginResult = await accountLoginRequest(account);
       this.token = loginResult.data.token;
+      this.name = loginResult.data.name;
       const id = loginResult.data.id;
 
       // 2. 将token进行本地缓存
@@ -43,25 +46,9 @@ export const useLoginStore = defineStore('Login', {
       this.userMenus = userMenus;
       localCache.setCache('userMenus', userMenus);
 
-      // 页面跳转前的操作二：添加动态路由
-
-      // 1. 获取菜单->userMenus
-      // 2. 动态获取所有路由对象，放到数组中
-      // * 路由对象都在独立的文件里/也可以直接都放到localRoutes中
-      // * 从文件中将所有的路由对象先读取数组中
-      const localRoutes: RouteRecordRaw[] = [];
-      const files: Record<string, any> = import.meta.glob('../../router/main/**/*.ts', { eager: true });
-      for (const key in files) {
-        const module = files[key];
-        localRoutes.push(module.default);
-      }
-      // 3. 根据菜单去匹配正确的路由
-      for (const menu of userMenus) {
-        for (const submenu of menu.chilren) {
-          const route = localRoutes.find((item) => item.path == submenu.url);
-          route && router.addRoute('main', route);
-        }
-      }
+      // 页面跳转前的操作二：添加动态路由  => 抽取到utils/map-menus.ts中了
+      const routes = mapMenuToRoutes(this.userMenus);
+      routes.forEach((route) => router.addRoute('main', route));
 
       // 3. 页面跳转（main页面）
       router.push('/main');
