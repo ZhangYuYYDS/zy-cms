@@ -7,7 +7,7 @@
     </div>
 
     <!-- 菜单 -->
-    <el-menu default-active="3" :collapse="isFold" text-color="#b7bdc3" active-text-color="#fff" background-color="#001529">
+    <el-menu :default-active="defaultValue" :collapse="isFold" text-color="#b7bdc3" active-text-color="#fff" background-color="#001529">
       <template v-for="item in userMenus" :key="item.id">
         <el-sub-menu :index="item.id + ''">
           <template #title>
@@ -28,8 +28,10 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 import { useLoginStore } from '@/store/login/login';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
+import { mapPathToMenu } from '@/utils/map-menus';
 
 // 接受数据
 defineProps({
@@ -48,6 +50,11 @@ const router = useRouter();
 function handleItemClick(item: any) {
   router.push(item.url);
 }
+
+// 菜单默认值问题
+const route = useRoute();
+const currentMenu = mapPathToMenu(userMenus, route.path);
+const defaultValue = ref(currentMenu.id + '');
 </script>
 
 <style lang="less" scoped>

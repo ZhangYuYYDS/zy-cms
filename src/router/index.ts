@@ -1,4 +1,5 @@
 import { localCache } from '@/utils/cache';
+import { firstMenu } from '@/utils/map-menus';
 import { createRouter, createWebHashHistory } from 'vue-router';
 
 const router = createRouter({
@@ -31,17 +32,19 @@ const router = createRouter({
 // 路由导航守卫
 router.beforeEach((to) => {
   const token = localCache.getCache('token');
+
+  if (!token && to.path.startsWith('/main')) {
+    return '/login';
+  }
+
   if (token && to.path == '/login') {
     return '/main';
   }
 
-  // if (!token && to.path.startsWith('/main')) {
-  //   return '/login';
-  // }
-
-  // if (firstRoute && to.path == '/main') {
-  //   return firstRoute.path;
-  // }
+  // 如果是到main页面，我们就跳转到第一个匹配到的路由
+  if (firstMenu && to.path == '/main') {
+    return firstMenu.url;
+  }
 });
 
 export default router;

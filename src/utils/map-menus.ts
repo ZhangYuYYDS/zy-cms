@@ -5,6 +5,7 @@ import type { RouteRecordRaw } from 'vue-router';
  * @param menus 菜单
  * @returns 路由
  */
+export let firstMenu: any = null;
 export function mapMenuToRoutes(userMenus: any[]) {
   // 1. 获取菜单->userMenus
   // 2. 动态获取所有路由对象，放到数组中
@@ -23,7 +24,22 @@ export function mapMenuToRoutes(userMenus: any[]) {
     for (const submenu of menu.children) {
       const route = localRoutes.find((item) => item.path == submenu.url);
       route && routes.push(route);
+      if (!firstMenu && route) firstMenu = submenu;
     }
   }
   return routes;
+}
+
+/**
+ * 根据我们的路径去匹配需要显示的菜单
+ * @param userMenus 所有菜单
+ * @param path 需要匹配的路径
+ * @returns 匹配到的菜单
+ */
+export function mapPathToMenu(userMenus: any[], path: string) {
+  for (const menu of userMenus) {
+    for (const submenu of menu.children) {
+      if (path === submenu.url) return submenu;
+    }
+  }
 }
