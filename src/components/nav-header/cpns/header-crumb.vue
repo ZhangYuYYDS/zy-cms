@@ -1,12 +1,19 @@
 <template>
   <el-breadcrumb separator="/">
-    <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
-    <el-breadcrumb-item><a href="/">promotion management</a></el-breadcrumb-item>
-    <el-breadcrumb-item>promotion list</el-breadcrumb-item>
-    <el-breadcrumb-item>promotion detail</el-breadcrumb-item>
+    <template v-for="item in breadcrumbs" :key="item.name">
+      <el-breadcrumb-item :to="item.path">{{ item.name }}</el-breadcrumb-item>
+    </template>
   </el-breadcrumb>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { mapPathToBreadcrumbs } from '@/utils/map-menus';
+import { useRoute } from 'vue-router';
+import { useLoginStore } from '@/store/login/login';
+import { computed } from 'vue';
 
-<style lang="less" scoped></style>
+const breadcrumbs = computed(() => {
+  const breadcrumbs = mapPathToBreadcrumbs(useLoginStore().userMenus, useRoute().path);
+  return breadcrumbs;
+});
+</script>

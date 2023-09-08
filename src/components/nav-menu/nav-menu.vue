@@ -28,10 +28,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
 import { useLoginStore } from '@/store/login/login';
 import { useRoute, useRouter } from 'vue-router';
 import { mapPathToMenu } from '@/utils/map-menus';
+import { computed } from 'vue';
 
 // 接受数据
 defineProps({
@@ -53,8 +53,10 @@ function handleItemClick(item: any) {
 
 // 菜单默认值问题
 const route = useRoute();
-const currentMenu = mapPathToMenu(userMenus, route.path);
-const defaultValue = ref(currentMenu.id + '');
+const defaultValue = computed(() => {
+  const currentMenu = mapPathToMenu(userMenus, route.path);
+  return currentMenu.id + '';
+});
 </script>
 
 <style lang="less" scoped>
