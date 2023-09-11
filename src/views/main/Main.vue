@@ -12,7 +12,7 @@
           <navHeader @foldChange="handleFoldChange" />
         </el-header>
         <!-- main -->
-        <el-main class="bg-blue">
+        <el-main class="bg-[#f0f2f5]">
           <router-view></router-view>
         </el-main>
       </el-container>
@@ -46,9 +46,5 @@ function handleFoldChange(isFoldValue) {
   &::-webkit-scrollbar {
     display: none;
   }
-}
-
-.el-main {
-  background-color: #f0f2f5;
 }
 </style>
