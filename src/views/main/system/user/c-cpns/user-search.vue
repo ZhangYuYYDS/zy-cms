@@ -72,6 +72,8 @@ const formRef = ref<InstanceType<typeof ElForm>>();
 //重置
 function handleResetClick() {
   formRef.value?.resetFields();
+  // 发送自定义事件
+  emit('resetClick');
 }
 // 查询
 function handleQueryClick() {

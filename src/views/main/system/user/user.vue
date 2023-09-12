@@ -1,6 +1,6 @@
 <template>
   <div class="grid overflow-hidden rounded-lg gap-y-5">
-    <userSearch @queryClick="queryClick" />
+    <userSearch @queryClick="queryClick" @resetClick="resetClick" />
     <userContent ref="contentRef" />
   </div>
 </template>
@@ -12,8 +12,13 @@ import { ref } from 'vue';
 
 // 拿到userContent组件实例
 const contentRef = ref<InstanceType<typeof userContent>>();
+// 查询
 function queryClick(userSearchForm: any) {
   contentRef.value?.fetchUserListData(userSearchForm);
+}
+// 重置
+function resetClick() {
+  contentRef.value?.fetchUserListData();
 }
 </script>
 
