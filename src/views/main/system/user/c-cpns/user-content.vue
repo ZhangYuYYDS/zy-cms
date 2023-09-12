@@ -1,5 +1,5 @@
 <template>
-  <div class="grid p-5 bg-white gap-y-2">
+  <div class="grid p-5 bg-white gap-y-5">
     <div class="flex items-center justify-between">
       <h3 class="text-xl font-bold">用户列表</h3>
       <el-button type="primary" @click="handleNewData">新建用户</el-button>
@@ -38,7 +38,19 @@
       </el-table>
     </div>
 
-    <div>分页</div>
+    <div class="flex justify-end">
+      <el-pagination
+        v-model:current-page="currentPage"
+        v-model:page-size="pageSize"
+        :page-sizes="[10, 20, 30]"
+        :small="small"
+        :background="background"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="usersTotalCount"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
+    </div>
   </div>
 </template>
 
@@ -46,13 +58,14 @@
 import { useSystemStore } from '@/store/main/system/system';
 import { storeToRefs } from 'pinia';
 import { utcFormat } from '@/utils/format';
+import { ref } from 'vue';
 
 // 1.发起action，请求usersList的数据
 const systemStore = useSystemStore();
 systemStore.postUsersListAction();
 
 // 2. 展示数据
-const { usersList } = storeToRefs(systemStore);
+const { usersList, usersTotalCount } = storeToRefs(systemStore);
 
 function handleNewData() {
   console.log('新建用户');
@@ -66,6 +79,18 @@ function handleEditClick(data: any) {
   // emit('editDataClick', data);
   console.log('编辑', data);
 }
+
+// 页码相关逻辑
+const currentPage = ref(1);
+const pageSize = ref(10);
+const small = ref(false);
+const background = ref(false);
+const handleSizeChange = (val: number) => {
+  console.log(`${val} items per page`);
+};
+const handleCurrentChange = (val: number) => {
+  console.log(`current page: ${val}`);
+};
 </script>
 
 <style lang="less" scoped>

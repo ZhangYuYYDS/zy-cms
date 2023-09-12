@@ -18,7 +18,6 @@ export const useSystemStore = defineStore('system', {
       const { totalCount, list } = usersListResult.data;
       this.usersList = list;
       this.usersTotalCount = totalCount;
-      console.log('111', this.usersList);
     },
   },
 });
