@@ -44,7 +44,7 @@
       </el-row>
     </el-form>
 
-    <!-- 按钮-->
+    <!-- 重置和查询按钮-->
     <div class="text-right p-r-[50px] p-b-[10px]">
       <el-button size="large" icon="Refresh" @click="handleResetClick">重置</el-button>
       <el-button size="large" icon="Search" type="primary" @click="handleQueryClick">查询</el-button>
@@ -53,8 +53,11 @@
 </template>
 
 <script setup lang="ts">
-import type { ElForm } from 'element-plus';
+import { type ElForm } from 'element-plus';
 import { reactive, ref } from 'vue';
+
+// 定义自定义事件
+const emit = defineEmits(['queryClick', 'resetClick']);
 
 const userSearchForm = reactive({
   name: '',
@@ -72,7 +75,8 @@ function handleResetClick() {
 }
 // 查询
 function handleQueryClick() {
-  console.log('查询');
+  // 发送自定义事件
+  emit('queryClick', userSearchForm);
 }
 </script>
 

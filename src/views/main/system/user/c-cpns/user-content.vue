@@ -99,15 +99,18 @@ const handleCurrentChange = () => {
 };
 
 // 定义函数，用于发送网络请求
-function fetchUserListData() {
+function fetchUserListData(searchFormData: any = {}) {
   // 1. 获取offset/size
   const size = pageSize.value;
   const offset = (currentPage.value - 1) * size;
-  const queryInfo = { size, offset };
+  const queryInfo = { size, offset, ...searchFormData };
 
   // 2. 发送网络请求，用于请求数据
   systemStore.postUsersListAction(queryInfo);
 }
+
+// 将函数暴露出去
+defineExpose({ fetchUserListData });
 </script>
 
 <style lang="less" scoped>
