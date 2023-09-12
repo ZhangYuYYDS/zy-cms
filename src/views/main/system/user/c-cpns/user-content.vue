@@ -4,7 +4,7 @@
       <h3 class="text-xl font-bold">用户列表</h3>
       <el-button type="primary" @click="handleNewData">新建用户</el-button>
     </div>
-
+    <!-- 表格 -->
     <div class="table">
       <el-table :data="usersList" border style="width: 100%">
         <el-table-column align="center" type="selection" label="选择" width="50" />
@@ -37,7 +37,7 @@
         </el-table-column>
       </el-table>
     </div>
-
+    <!-- 分页 -->
     <div class="flex justify-end">
       <el-pagination
         v-model:current-page="currentPage"
@@ -60,16 +60,25 @@ import { storeToRefs } from 'pinia';
 import { utcFormat } from '@/utils/format';
 import { ref } from 'vue';
 
-// 1.发起action，请求usersList的数据
 const systemStore = useSystemStore();
-systemStore.postUsersListAction();
+
+// 页码相关逻辑开始
+const small = ref(true);
+const background = ref(true);
+const currentPage = ref(1); //现在在第几页
+const pageSize = ref(10); // 一页的数量
+// 页码相关逻辑结束
+
+// 发送网络请求：用于获取usersList, usersTotalCount数据
+fetchUserListData();
 
 // 2. 展示数据
 const { usersList, usersTotalCount } = storeToRefs(systemStore);
 
 function handleNewData() {
-  console.log('新建用户');
+  console.log('新建');
 }
+
 function handleDeleteClick(id: number) {
   // systemStore.deleteUserDataAction(id);
   console.log('删除', id);
@@ -80,17 +89,25 @@ function handleEditClick(data: any) {
   console.log('编辑', data);
 }
 
-// 页码相关逻辑
-const currentPage = ref(1);
-const pageSize = ref(10);
-const small = ref(false);
-const background = ref(false);
-const handleSizeChange = (val: number) => {
-  console.log(`${val} items per page`);
+const handleSizeChange = () => {
+  // 发送网络请求：用于根据size（页内数量）重新请求数据
+  fetchUserListData();
 };
-const handleCurrentChange = (val: number) => {
-  console.log(`current page: ${val}`);
+const handleCurrentChange = () => {
+  // 发送网络请求：用于根据offset（页码发生改变）重新请求数据
+  fetchUserListData();
 };
+
+// 定义函数，用于发送网络请求
+function fetchUserListData() {
+  // 1. 获取offset/size
+  const size = pageSize.value;
+  const offset = (currentPage.value - 1) * size;
+  const queryInfo = { size, offset };
+
+  // 2. 发送网络请求，用于请求数据
+  systemStore.postUsersListAction(queryInfo);
+}
 </script>
 
 <style lang="less" scoped>

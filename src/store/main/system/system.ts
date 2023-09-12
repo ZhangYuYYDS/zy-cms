@@ -12,9 +12,9 @@ export const useSystemStore = defineStore('system', {
     usersTotalCount: 0,
   }),
   actions: {
-    async postUsersListAction() {
+    async postUsersListAction(queryInfo: any) {
       // 请求用户列表数据
-      const usersListResult = await postUsersListData();
+      const usersListResult = await postUsersListData(queryInfo);
       const { totalCount, list } = usersListResult.data;
       this.usersList = list;
       this.usersTotalCount = totalCount;
