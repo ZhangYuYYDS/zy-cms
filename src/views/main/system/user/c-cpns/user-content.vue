@@ -1,11 +1,11 @@
 <template>
   <div class="grid p-5 bg-white gap-y-5">
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between p-r-4">
       <h3 class="text-xl font-bold">用户列表</h3>
       <el-button type="primary" @click="handleNewData">新建用户</el-button>
     </div>
     <!-- 表格 -->
-    <div class="table">
+    <div class="table p-r-4">
       <el-table :data="usersList" border style="width: 100%">
         <el-table-column align="center" type="selection" label="选择" width="50" />
         <el-table-column align="center" type="index" label="序号" width="60" />
@@ -60,6 +60,7 @@ import { storeToRefs } from 'pinia';
 import { utcFormat } from '@/utils/format';
 import { ref } from 'vue';
 
+const emit = defineEmits(['newDataClick']);
 const systemStore = useSystemStore();
 
 // 页码相关逻辑开始
@@ -75,15 +76,17 @@ fetchUserListData();
 // 2. 展示数据
 const { usersList, usersTotalCount } = storeToRefs(systemStore);
 
+// 新建
 function handleNewData() {
-  console.log('新建');
+  emit('newDataClick');
 }
 
+// 删除
 function handleDeleteClick(id: number) {
-  // systemStore.deleteUserDataAction(id);
-  console.log('删除', id);
+  systemStore.deleteUserAction(id);
 }
 
+// 编辑
 function handleEditClick(data: any) {
   // emit('editDataClick', data);
   console.log('编辑', data);
