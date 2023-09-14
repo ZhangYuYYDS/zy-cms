@@ -1,7 +1,7 @@
 <template>
   <div class="grid overflow-hidden rounded-lg gap-y-5">
     <userSearch @queryClick="queryClick" @resetClick="resetClick" />
-    <userContent ref="contentRef" @newDataClick="newDataClick" />
+    <userContent ref="contentRef" @newDataClick="newDataClick" @editDataClick="editDataClick" />
     <userModal ref="modalRef" />
   </div>
 </template>
@@ -26,10 +26,12 @@ function resetClick() {
 
 // 拿到userModal组件实例
 const modalRef = ref<InstanceType<typeof userModal>>();
-
-// 新建
 function newDataClick() {
   modalRef.value?.setDialogVisible();
+}
+
+function editDataClick(data: any) {
+  modalRef.value?.setDialogVisible(false, data);
 }
 </script>
 

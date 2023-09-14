@@ -4,6 +4,7 @@ import type { Account } from '@/types/login';
 import { localCache } from '@/utils/cache';
 import router from '@/router/index';
 import { mapMenuToRoutes } from '@/utils/map-menus';
+import { useMainStore } from '../main/main';
 
 // 指定state的类型
 interface ILoginState {
@@ -47,7 +48,11 @@ export const useLoginStore = defineStore('Login', {
       this.userMenus = userMenus;
       localCache.setCache('userMenus', userMenus);
 
-      // 页面跳转前的操作二：添加动态路由  => 抽取到utils/map-menus.ts中了
+      // 页面跳转前的操作二：请求所有的roles/departments数据
+      const mainStore = useMainStore();
+      mainStore.fetchEntireDataAction();
+
+      // 页面跳转前的操作三：添加动态路由  => 抽取到utils/map-menus.ts中了
       const routes = mapMenuToRoutes(this.userMenus);
       routes.forEach((route) => router.addRoute('main', route));
 
@@ -65,6 +70,9 @@ export const useLoginStore = defineStore('Login', {
 
       // 这三个都有值说明用户处于已经登录的状态
       if (this.token && this.userMenus && this.userInfo && this.name) {
+        const mainStore = useMainStore();
+        mainStore.fetchEntireDataAction();
+
         // 再次动态添加路由
         const routes = mapMenuToRoutes(this.userMenus);
         routes.forEach((route) => router.addRoute('main', route));

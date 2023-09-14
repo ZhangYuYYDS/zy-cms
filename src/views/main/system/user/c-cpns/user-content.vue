@@ -9,10 +9,10 @@
       <el-table :data="usersList" border style="width: 100%">
         <el-table-column align="center" type="selection" label="选择" width="50" />
         <el-table-column align="center" type="index" label="序号" width="60" />
-        <el-table-column align="center" prop="name" label="用户名" width="150" />
-        <el-table-column align="center" prop="realname" label="真实姓名" width="150" />
-        <el-table-column align="center" prop="cellphone" label="手机号码" width="150" />
-        <el-table-column align="center" prop="enable" label="状态" width="100">
+        <el-table-column align="center" prop="name" label="用户名" width="145" />
+        <el-table-column align="center" prop="realname" label="真实姓名" width="145" />
+        <el-table-column align="center" prop="cellphone" label="手机号码" width="145" />
+        <el-table-column align="center" prop="enable" label="状态" width="90">
           <template #default="scope">
             <el-button :type="scope.row.enable == 1 ? 'success' : 'danger'" plain size="small">
               {{ scope.row.enable == 1 ? '启用' : '禁用' }}
@@ -60,7 +60,7 @@ import { storeToRefs } from 'pinia';
 import { utcFormat } from '@/utils/format';
 import { ref } from 'vue';
 
-const emit = defineEmits(['newDataClick']);
+const emit = defineEmits(['newDataClick', 'editDataClick']);
 const systemStore = useSystemStore();
 
 // 页码相关逻辑开始
@@ -83,13 +83,12 @@ function handleNewData() {
 
 // 删除
 function handleDeleteClick(id: number) {
-  systemStore.deleteUserAction(id);
+  systemStore.deleteUserDataAction(id);
 }
 
 // 编辑
 function handleEditClick(data: any) {
-  // emit('editDataClick', data);
-  console.log('编辑', data);
+  emit('editDataClick', data);
 }
 
 const handleSizeChange = () => {
@@ -109,7 +108,7 @@ function fetchUserListData(searchFormData: any = {}) {
   const queryInfo = { size, offset, ...searchFormData };
 
   // 2. 发送网络请求，用于请求数据
-  systemStore.postUsersListAction(queryInfo);
+  systemStore.getUserListDataAction(queryInfo);
 }
 
 // 将函数暴露出去
